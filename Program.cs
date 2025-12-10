@@ -1,5 +1,6 @@
 using Capstone_Project_Piyush_Hirdey.Data;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace Capstone_Project_Piyush_Hirdey
@@ -15,11 +16,16 @@ namespace Capstone_Project_Piyush_Hirdey
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
 
-            builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = false)
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
             builder.Services.AddControllersWithViews();
 
+            builder.Services.AddTransient<IEmailSender, Capstone_Project_Piyush_Hirdey.Services.NoOpEmailSender>();
+
+
             builder.Services.AddRazorPages();
+
 
 
             var app = builder.Build();
@@ -49,6 +55,12 @@ namespace Capstone_Project_Piyush_Hirdey
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
             app.MapRazorPages();
+
+            app.MapGet("/db", (IConfiguration config) =>
+            {
+                return config.GetConnectionString("DefaultConnection");
+            });
+
 
             app.Run();
         }

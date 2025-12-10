@@ -2,14 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Capstone_Project_Piyush_Hirdey.Data;
+using Capstone_Project_Piyush_Hirdey.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Capstone_Project_Piyush_Hirdey.Data;
-using Capstone_Project_Piyush_Hirdey.Models;
 
 namespace Capstone_Project_Piyush_Hirdey.Controllers
 {
+   
     public class ProjectsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -20,12 +22,14 @@ namespace Capstone_Project_Piyush_Hirdey.Controllers
         }
 
         // GET: Projects
+        [Authorize(Roles = "Admin,Manager,Employee")]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Projects.ToListAsync());
         }
 
         // GET: Projects/Details/5
+        [Authorize(Roles = "Admin,Manager,Employee")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -44,6 +48,7 @@ namespace Capstone_Project_Piyush_Hirdey.Controllers
         }
 
         // GET: Projects/Create
+        [Authorize(Roles = "Admin,Manager")]
         public IActionResult Create()
         {
             return View();
@@ -54,6 +59,7 @@ namespace Capstone_Project_Piyush_Hirdey.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> Create([Bind("Id,ProjectName")] Project project)
         {
             if (ModelState.IsValid)
@@ -66,6 +72,7 @@ namespace Capstone_Project_Piyush_Hirdey.Controllers
         }
 
         // GET: Projects/Edit/5
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -86,6 +93,7 @@ namespace Capstone_Project_Piyush_Hirdey.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,ProjectName")] Project project)
         {
             if (id != project.Id)
@@ -117,6 +125,7 @@ namespace Capstone_Project_Piyush_Hirdey.Controllers
         }
 
         // GET: Projects/Delete/5
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -137,6 +146,7 @@ namespace Capstone_Project_Piyush_Hirdey.Controllers
         // POST: Projects/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var project = await _context.Projects.FindAsync(id);
